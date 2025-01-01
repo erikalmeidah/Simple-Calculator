@@ -1,51 +1,78 @@
 // Display
-updateDisplay('1 + 2');
-
 // update display string
 function updateDisplay(displayString) {
-  document.querySelector('.display').innerHTML += displayString;
+  if (displayString === 'CE') {
+    document.querySelector('.display').innerHTML = document.querySelector('.display').innerHTML.slice(0, -1);
+  } else {
+    document.querySelector('.display').innerHTML += displayString;
+  }
 }
 
 // evaluate display string
 function evalDisplay() {
+  // get string to calculate
   toCalc = document.querySelector('.display').innerHTML;
-
-  if (toCalc === '') {
-    alert('Please enter a valid value');
-  } else {
-    res = eval(toCalc);
-    document.querySelector('.display').innerHTML = res;
-  }
+  toCalc = toCalc.replace('x', '*').replace('÷', '/').replace('√', 'Math.sqrt');
+  // calculate
+  let res = Function('return ' + toCalc)();
+  res = parseFloat(res.toFixed(2));
+  // display the result
+  document.querySelector('.display').innerHTML = res;
 }
-evalDisplay()
 
-// number button implementations
+// reset display
+function resetDisplay() {
+  document.querySelector('.display').innerHTML = '';
+}
+
+// Number buttons
   // get all number buttons using dom
   buttons = document.querySelectorAll('.number-button').forEach((button) => {
     // for each button - onclick
     button.addEventListener('click', () => {
       // get text
-      num = button.textContent;
-      console.log(num);
+      num = button.textContent.trim();
       //if number or . or add to calc string
-      if (num !== '+/-') {
-        // update display
-        updateDisplay(num);
-        
-      } else {
-        //do * -1 on rightmost number
-
+      switch (num) {
+        case '.':
+          updateDisplay(num);
+          break;
+        case '+/-':
+          // TODO
+          // reverse loop through display string until you find beginning or operation sign, then add - in front
+          break;
+        default:
+          updateDisplay(num);
+          break;
       }
-      
     });
   });
-  
+       
+// Round buttons
+buttons = document.querySelectorAll('.round-button').forEach((button) => {
+  // for each button - onclick
+  button.addEventListener('click', () => {
+    operation = button.textContent.trim();
+    switch (operation) {
+      case 'C':
+        resetDisplay();
+        break;
+      case 'CE':
+        updateDisplay('CE');
+        break;
+      case '√':
+        //TODO
+        break;
+      default:
+        updateDisplay(operation);
+        break;
+    }
+  });
+});
 
-      
-// round button implementations
-
-
-// equals button implementation
-  // get display text using dom
-
-  //evaluate and update
+// Equals button
+equalsButton = document.querySelectorAll('.equals-button').forEach((button) => {
+  button.addEventListener('click', () => {
+    evalDisplay();
+  });
+});
